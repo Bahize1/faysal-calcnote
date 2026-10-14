@@ -1,0 +1,19 @@
+{
+  "name": "faysal-calcnote",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "fonts": "node scripts/fonts.js"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.0",
+    "@capacitor/cli": "^6.1.0",
+    "@capacitor/core": "^6.1.0",
+    "@fontsource/big-shoulders-display": "^5.0.0",
+    "@fontsource/instrument-sans": "^5.0.0",
+    "@fontsource/jetbrains-mono": "^5.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5"
+  }
+}
