@@ -1,0 +1,53 @@
+name: APK signe
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: unzip -o Faysal-CalcNote-android.zip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - run: npm install
+      - run: npm run fonts
+      - run: npx cap add android
+      - run: npx capacitor-assets generate --android
+      - run: npx cap sync android
+      - name: Cle de signature
+        run: echo "${{ secrets.KEYSTORE_B64 }}" | base64 -d > "$GITHUB_WORKSPACE/release.jks"
+      - name: Activer la signature
+        run: |
+          printf '%s\n' \
+            'android {' \
+            '    signingConfigs {' \
+            '        release {' \
+            '            storeFile file(System.getenv("KS_FILE"))' \
+            '            storePassword System.getenv("KS_PASS")' \
+            '            keyAlias "faysal"' \
+            '            keyPassword System.getenv("KS_PASS")' \
+            '        }' \
+            '    }' \
+            '    buildTypes {' \
+            '        release {' \
+            '            signingConfig signingConfigs.release' \
+            '        }' \
+            '    }' \
+            '}' >> android/app/build.gradle
+          tail -15 android/app/build.gradle
+      - name: Compiler
+        env:
+          KS_FILE: ${{ github.workspace }}/release.jks
+          KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: cd android && chmod +x gradlew && ./gradlew assembleRelease bundleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Faysal-CalcNote-signe
+          path: |
+            android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/bundle/release/*.aab
