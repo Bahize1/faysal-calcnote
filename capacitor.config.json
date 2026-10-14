@@ -1,7 +1,0 @@
-{
-  "appId": "com.faysal.calcnote",
-  "appName": "Faysal CalcNote",
-  "webDir": "www",
-  "server": { "androidScheme": "https" },
-  "android": { "backgroundColor": "#16241D" }
-}
