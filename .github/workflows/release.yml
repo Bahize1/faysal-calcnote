@@ -6,7 +6,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: unzip -o Faysal-CalcNote-android.zip
+      - name: Decompresser le projet
+        run: |
+          f=$(ls Faysal-CalcNote-android-v*.zip 2>/dev/null | sort -V | tail -1)
+          [ -z "$f" ] && f=Faysal-CalcNote-android.zip
+          echo "Projet : $f"
+          unzip -o "$f"
       - uses: actions/setup-node@v4
         with:
           node-version: 20
