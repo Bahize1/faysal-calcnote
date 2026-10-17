@@ -48,8 +48,8 @@ jobs:
       - name: Compiler
         env:
           KS_FILE: ${{ github.workspace }}/release.jks
-          KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
-        run: cd android && chmod +x gradlew && ./gradlew assembleRelease bundleRelease
+          KS_PASS: ${{ secrets.KEYSTORE  
+        run: cd android && chmod +x gradlew && ./gradlew assembleRelease bundleRelease --stacktrace --info
       - uses: actions/upload-artifact@v4
         with:
           name: Faysal-CalcNote-signe
