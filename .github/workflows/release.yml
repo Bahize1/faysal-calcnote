@@ -46,13 +46,20 @@ jobs:
       - name: Synchroniser Android
         run: npx cap sync android
 
+      - name: Mettre a jour Gradle
+        shell: bash
+        run: |
+          sed -i 's/gradle-8\.2\.1-/gradle-8.6-/' \
+            android/gradle/wrapper/gradle-wrapper.properties
+          cat android/gradle/wrapper/gradle-wrapper.properties
+
       - name: Preparer la cle de signature
         shell: bash
         env:
           KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
         run: |
           if [ -z "$KEYSTORE_B64" ]; then
-            echo "Erreur : le secret KEYSTORE_B64 est absent."
+            echo "Erreur : secret KEYSTORE_B64 absent"
             exit 1
           fi
           echo "$KEYSTORE_B64" | base64 -d > "$GITHUB_WORKSPACE/release.jks"
@@ -87,8 +94,8 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew --stop
-          ./gradlew assembleRelease bundleRelease --no-daemon --stacktrace --info
+          ./gradlew --stop || true
+          ./gradlew assembleRelease bundleRelease --no-daemon --stacktrace
 
       - name: Publier les fichiers APK et AAB
         if: success()
