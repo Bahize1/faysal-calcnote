@@ -1,0 +1,11 @@
+name: Deploy Faysal CalcNote Web
+
+on: workflow_dispatch: push: paths: - 'web.zip' - '.github/workflows/deploy-web.yml'
+
+permissions: contents: read pages: write id-token: write
+
+concurrency: group: github-pages cancel-in-progress: true
+
+jobs: deploy: environment: name: github-pages url: ${{ steps.deployment.outputs.page_url }} runs-on: ubuntu-latest
+
+steps: - name: Checkout repository uses: actions/checkout@v4 - name: Setup Node.js uses: actions/setup-node@v4 with: node-version: 20 - name: Extract web.zip run: | test -f web.zip mkdir web-dist unzip -o web.zip -d web-dist find web-dist -maxdepth 3 -type f | head -100 - name: Find website entry point run: | if [ -f web-dist/index.html ]; then echo "SITE_DIR=web-dist" >> "$GITHUB_ENV" elif [ -f web-dist/www/index.html ]; then echo "SITE_DIR=web-dist/www" >> "$GITHUB_ENV" else FILE=$(find web-dist -type f -name index.html | head -1) if [ -z "$FILE" ]; then echo "Erreur : aucun index.html trouvé dans web.zip" exit 1 fi echo "SITE_DIR=$(dirname "$FILE")" >> "$GITHUB_ENV" fi - name: Configure GitHub Pages uses: actions/configure-pages@v5 - name: Upload website uses: actions/upload-pages-artifact@v3 with: path: ${{ env.SITE_DIR }} - name: Deploy website id: deployment uses: actions/deploy-pages@v4 
