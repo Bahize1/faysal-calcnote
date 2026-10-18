@@ -5,7 +5,7 @@ name: Faysal CalcNote web
   workflow_dispatch:
   push:
     paths:
-      - 'web.zip'
+      - 'Faysal-CalcNote-web.zip'
       - '.github/workflows/deploy-web.yml'
 
 permissions:
@@ -27,12 +27,13 @@ jobs:
       - name: Extract web.zip
         run: |
           set -e
-          test -f web.zip
+          ZIP="Faysal-CalcNote-web.zip"
+          test -f "$ZIP"
           mkdir web-dist
-          unzip -o web.zip -d web-dist
+          unzip -o "$ZIP" -d web-dist
           FILE="$(find web-dist -type f -name index.html -print -quit)"
           if [ -z "$FILE" ]; then
-            echo "Erreur : aucun index.html trouvé dans web.zip"
+            echo "Erreur : aucun index.html trouvé dans le ZIP"
             exit 1
           fi
           echo "SITE_DIR=$(dirname "$FILE")" >> "$GITHUB_ENV"
